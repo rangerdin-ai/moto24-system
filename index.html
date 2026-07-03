@@ -2109,7 +2109,7 @@ function wkTable(list){if(!list.length)return '<p class="muted">ไม่มี�
 function wkPill(paid,total){if(!total)return '<span style="color:#aaa">—</span>';var p=paid/total,ps=((paid/total)*100).toFixed(2)+'%';var s=p>=0.5?'background:#dcfce7;color:#14532d;border:1.5px solid #86efac':p>=0.2?'background:#fef3c7;color:#92400e;border:1.5px solid #fcd34d':'background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5';return '<span style="display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:8px;'+s+'">'+ps+'</span>';}
 function wkPillGrand(paid,total){var ps=total?((paid/total)*100).toFixed(2)+'%':'0.00%';return '<span style="display:inline-block;font-size:14px;font-weight:800;padding:4px 12px;border-radius:8px;background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4)">'+ps+'</span>';}
 function renderWeekKPI(){
-  var wkPaidLike=function(x){return isCollected(x)&&(!!(x.pdate||x.pd>0)||x.pc===1);};
+  var wkPaidLike=function(x){return x.pd>0||pdateThisMonth(x)||x.pc===1;};
   var period=SYNC.period||'2569-06';
   var pp=period.split('-'),byear=parseInt(pp[0])||2569,mon=parseInt(pp[1])||6,ceyear=byear-543;
   var lastDay=new Date(ceyear,mon,0).getDate();
@@ -2142,7 +2142,7 @@ function renderWeekKPI(){
   });
   recs.forEach(function(x){
     var dn=parseDt(x.du);var dday=dn?dn%100:1;var wi=wkIdx(dday);var w=WS[wi];
-    var _st;if(wkPaidLike(x)){var _pdStr=x.pdate;if(!_pdStr&&x.pd>0){_pdStr=String(x.pd).padStart(2,'0')+'/'+String(mon).padStart(2,'0')+'/'+ceyear;}var pd=parseDt(_pdStr);var duY=dn?Math.floor(dn/10000):ceyear;var duM=dn?Math.floor((dn%10000)/100):mon;var duLd=new Date(duY,duM,0).getDate();var wkEnd=[7,14,21,28,duLd][wi];if(pd&&(pd<=dn||(pd%100)<=wkEnd)){w.done++;_st='done';}else{w.late++;_st='late';}}else{w.owed++;_st='owed';}
+    var _st;if(wkPaidLike(x)){if(x.pc===1&&x.pd<1&&!pdateThisMonth(x)){w.done++;_st='done';}else{var _pdStr=x.pdate;if(!_pdStr&&x.pd>0){_pdStr=String(x.pd).padStart(2,'0')+'/'+String(mon).padStart(2,'0')+'/'+ceyear;}var pd=parseDt(_pdStr);var duY=dn?Math.floor(dn/10000):ceyear;var duM=dn?Math.floor((dn%10000)/100):mon;var duLd=new Date(duY,duM,0).getDate();var wkEnd=[7,14,21,28,duLd][wi];if(pd&&(pd<=dn||(pd%100)<=wkEnd)){w.done++;_st='done';}else{w.late++;_st='late';}}}else{w.owed++;_st='owed';}
     w.list.push({n:x.n,tel:x.tel||'',cno:x.cno||'',du:x.du||'',pdate:x.pdate||'',paid:wkPaidLike(x),pn:x.pn||0,f:x.f||0,status:_st,s:x.s});
   });
   _wkData=WS;
