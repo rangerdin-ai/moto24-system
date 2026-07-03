@@ -2901,6 +2901,8 @@ setupLogin();
       if(!_ex.st)_ex.st='ot';
       if(!_ex.log)_ex.log=[];
       if(_ex.cn===undefined)_ex.cn=0;
+      if(_ex.pd===undefined)_ex.pd=0;
+      if(_ex.pc===undefined)_ex.pc=0;
     }
     // 2) Rebuild DATA g0-g7 + reset plan/act/days from embedded CUST
     var _nd=(typeof NDAYS!=='undefined'&&NDAYS>0)?NDAYS:31;
